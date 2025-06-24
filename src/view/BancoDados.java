@@ -24,8 +24,8 @@ public class BancoDados {
 
     private static void gerarAlunos() {
         String[] nomes = {"Ana", "Bruno", "Carlos", "Daniela", "Eduardo", "Fernanda", "Gabriel", "Helena", "Igor", "Julia",
-                          "Kaio", "Larissa", "Marcos", "Natalia", "Otavio", "Paula", "Rafael", "Sara", "Thiago", "Vanessa",
-                          "Wesley", "Xuxa", "Yuri", "Zuleika", "Felipe", "Luana", "Pedro", "Camila", "Lucas", "Beatriz"};
+                "Kaio", "Larissa", "Marcos", "Natalia", "Otavio", "Paula", "Rafael", "Sara", "Thiago", "Vanessa",
+                "Wesley", "Xuxa", "Yuri", "Zuleika", "Felipe", "Luana", "Pedro", "Camila", "Lucas", "Beatriz"};
         Random rand = new Random();
 
         try (Connection con = Conexao.conectar()) {
@@ -33,13 +33,11 @@ public class BancoDados {
             PreparedStatement ps = con.prepareStatement(sql);
 
             for (int i = 0; i < 90; i++) {
-                String nomeBase = nomes[i % nomes.length];
-                String nomeCompleto = nomeBase + " Silva " + (i + 1);
+                String nome = nomes[i % nomes.length] + " Silva " + (i + 1);
                 String endereco = "Rua " + (i + 1);
                 String telefone = "(11) 9" + (rand.nextInt(90000000) + 10000000);
-                String nomeMae = "Mãe de " + nomeCompleto;
-                String cpf = String.format("%011d", Math.abs(rand.nextLong()) % 100000000000L);
-                String email = nomeCompleto.replace(" ", ".").toLowerCase() + "@escola.com";
+                String nomeMae = "Mãe de " + nome;
+                String cpf = String.format("%011d", Math.abs(rand.nextLong()) % 100000000000L);               String email = nome.replace(" ", ".").toLowerCase() + "@escola.com";
                 String turma, turno;
                 int idade;
 
@@ -57,11 +55,11 @@ public class BancoDados {
                     idade = 24 + rand.nextInt(3);
                 }
 
-                String login = nomeBase.toLowerCase() + (i + 1); // Exemplo: ana1, bruno2...
+                String login = nomes[i % nomes.length].toLowerCase() + (i + 1);
                 String senha = "12345";
                 String palavraChave = "minhaseguranca";
 
-                ps.setString(1, nomeCompleto);
+                ps.setString(1, nome);
                 ps.setString(2, endereco);
                 ps.setString(3, telefone);
                 ps.setString(4, nomeMae);
@@ -76,42 +74,11 @@ public class BancoDados {
 
                 ps.executeUpdate();
             }
-
-            System.out.println("Alunos gerados com sucesso no banco de dados!");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static ArrayList<Aluno> listarTodos() {
-        ArrayList<Aluno> lista = new ArrayList<>();
-        try (Connection con = Conexao.conectar();
-             Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM alunos")) {
-
-            while (rs.next()) {
-                lista.add(new Aluno(
-                        rs.getInt("id"),
-                        rs.getString("nome_completo"),
-                        rs.getString("endereco"),
-                        rs.getString("telefone"),
-                        rs.getString("nome_mae"),
-                        rs.getString("cpf"),
-                        rs.getString("email"),
-                        rs.getString("turma"),
-                        rs.getString("turno"),
-                        rs.getInt("idade"),
-                        rs.getString("login"),
-                        rs.getString("senha"),
-                        rs.getString("palavra_chave")
-                ));
-            }
+            System.out.println("Alunos gerados no banco de dados com sucesso!");
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return lista;
     }
 
     public static Aluno buscarPorLogin(String login) {
@@ -145,4 +112,4 @@ public class BancoDados {
         }
         return null;
     }
-}
+} 
